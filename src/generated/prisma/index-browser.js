@@ -120,6 +120,16 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.AdminScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  name: 'name',
+  email: 'email',
+  password: 'password',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -136,16 +146,6 @@ exports.Prisma.ProductScalarFieldEnum = {
   price: 'price',
   imageUrl: 'imageUrl',
   categoryId: 'categoryId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.AdminScalarFieldEnum = {
-  id: 'id',
-  username: 'username',
-  name: 'name',
-  email: 'email',
-  password: 'password',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -167,9 +167,9 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
+  Admin: 'Admin',
   Category: 'Category',
-  Product: 'Product',
-  Admin: 'Admin'
+  Product: 'Product'
 };
 
 /**
