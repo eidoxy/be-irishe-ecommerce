@@ -41,3 +41,4 @@ model Product {
 
   @@index([category_id])
 }
+

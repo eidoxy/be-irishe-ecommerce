@@ -11,7 +11,7 @@ export const getProducts = async (req: Request, res: Response): Promise<Response
       return res.status(500).json({ message: 'Gagal mengambil produk', error });
     }
   };
-  
+
 export const getProduct = async (req: Request, res: Response) => {
   try {
     const product = await prisma.product.findUnique({
