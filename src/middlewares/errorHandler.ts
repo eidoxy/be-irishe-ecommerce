@@ -1,18 +1,24 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../utils/AppError';
+import { ZodError } from 'zod';
+import { ResponseError } from './responseError';
 
-export function errorHandler(
-  err: AppError,
+export const errorHandler = async (
+  error: Error,
   req: Request,
   res: Response,
   next: NextFunction
-) {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
-
-  res.status(statusCode).json({
-    status: 'error',
-    statusCode,
-    message,
-  });
+) => {
+  if (error instanceof ZodError) {
+    res.status(400).json({
+      error: `Validation error: ${JSON.stringify(error)}`,
+    });
+  } else if (error instanceof ResponseError) {
+    res.status(error.status).json({
+      error: error.message,
+    });
+  } else {
+    res.status(500).json({
+      error: `Internal server error: ${error.message}`,
+    });
+  }
 }
