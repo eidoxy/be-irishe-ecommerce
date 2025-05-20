@@ -11,7 +11,7 @@ async function main() {
   // Seed Admin
   await prisma.admin.create({
     data: {
-      id: 'admin1',
+      id: 1,
       username: 'superadmin',
       name: 'Admin Utama',
       email: 'admin@example.com',
@@ -24,13 +24,13 @@ async function main() {
   await prisma.category.createMany({
     data: [
       { 
-        id: 'cat1', 
+        id: 1, 
         name: 'Electronics', 
         description: 'Gadgets and devices',
         updatedAt: new Date() // Tambahkan ini
       },
       { 
-        id: 'cat2', 
+        id: 2, 
         name: 'Clothing', 
         description: 'Fashion items',
         updatedAt: new Date() // Tambahkan ini
@@ -42,23 +42,23 @@ async function main() {
   await prisma.product.createMany({
     data: [
       {
-        id: 'prod1',
+        id: 1,
         name: 'Smartphone X',
         description: 'Latest smartphone',
         price: 599.99,
         stock: 100,
-        category_id: 'cat1',
-        image_url: 'https://example.com/phone.jpg',
+        categoryId: 1,
+        imageUrl: 'https://example.com/phone.jpg',
         updatedAt: new Date() 
       },
       {
-        id: 'prod2',
+        id: 2,
         name: 'T-Shirt',
         description: 'Cotton t-shirt',
         price: 19.99,
         stock: 50,
-        category_id: 'cat2',
-        image_url: 'https://example.com/shirt.jpg',
+        categoryId: 1,
+        imageUrl: 'https://example.com/shirt.jpg',
         updatedAt: new Date() 
       },
     ],
