@@ -12,7 +12,7 @@ export type CategoryCreateRequest = {
 }
 
 export type CategoryUpdateRequest = {
-  name?: string;
+  name: string;
   description?: string;
 }
 

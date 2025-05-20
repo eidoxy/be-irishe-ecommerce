@@ -57,7 +57,7 @@ async function main() {
         description: 'Cotton t-shirt',
         price: 19.99,
         stock: 50,
-        categoryId: 1,
+        categoryId: 2,
         imageUrl: 'https://example.com/shirt.jpg',
         updatedAt: new Date() 
       },

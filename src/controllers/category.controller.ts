@@ -1,4 +1,4 @@
-import { CategoryCreateRequest } from "../model/category.model";
+import { CategoryCreateRequest, CategoryUpdateRequest } from "../model/category.model";
 import { CategoryService } from "../services/category.service";
 import { Request, Response, NextFunction } from "express";
 
@@ -41,7 +41,7 @@ export class CategoryController {
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
       const id = parseInt(req.params.id);
-      const request: CategoryCreateRequest = req.body as CategoryCreateRequest;
+      const request: CategoryUpdateRequest = req.body as CategoryUpdateRequest;
       const response = await CategoryService.update(id, request);
       res.status(200).json({
         data: response,

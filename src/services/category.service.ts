@@ -1,6 +1,6 @@
 import { prismaClient } from "../config/db";
 import { ResponseError } from "../middlewares/responseError";
-import { CategoryCreateRequest, CategoryResponse, toCategoryResponse } from "../model/category.model";
+import { CategoryCreateRequest, CategoryUpdateRequest, CategoryResponse, toCategoryResponse } from "../model/category.model";
 import { CategoryValidation } from "../validations/category.validation";
 import { Validation } from "../validations/validation";
 
@@ -52,7 +52,7 @@ export class CategoryService {
     return toCategoryResponse(category);
   }
 
-  static async update(id: number, request: CategoryCreateRequest) : Promise<CategoryResponse> {
+  static async update(id: number, request: CategoryUpdateRequest) : Promise<CategoryResponse> {
     // validate the request
     const updateRequest = Validation.validate(CategoryValidation.UPDATE, request)
 
@@ -70,7 +70,10 @@ export class CategoryService {
     // check if the category with same name already exists
     const totalCategoryWithSameName = await prismaClient.category.count({
       where: {
-        name: updateRequest.name
+        name: updateRequest.name,
+        id: {
+          not: id
+        }
       }
     });
 
