@@ -35,6 +35,7 @@ model Product {
   name        String
   description String?
   stock       Int      @default(0)
+  stock       Int      @default(0)
   price       Float
   imageUrl    String?  @map("image_url")
   categoryId  Int      @map("category_id")
