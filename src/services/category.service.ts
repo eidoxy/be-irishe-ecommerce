@@ -52,9 +52,9 @@ export class CategoryService {
     return toCategoryResponse(category);
   }
 
-  static async update(id: number, request: CategoryCreateRequest) : Promise<CategoryResponse> {
+  static async update(id: number, request: CategoryUpdateRequest) : Promise<CategoryResponse> {
     // validate the request
-    const updateRequest = Validation.validate(CategoryValidation.UPDATE, request)
+    const updateRequest = Validation.validate(CategoryValidation.UPDATE, request);
 
     // check if the category id exists
     const category = await prismaClient.category.findUnique({
