@@ -70,7 +70,8 @@ export class CategoryService {
     // check if the category with same name already exists
     const totalCategoryWithSameName = await prismaClient.category.count({
       where: {
-        name: updateRequest.name
+        name: updateRequest.name,
+        id: { not: id }
       }
     });
 
