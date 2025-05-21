@@ -1,6 +1,7 @@
 # Direktori build
 dist/
 build/
+public/uploads/
 
 # Dependencies
 node_modules/

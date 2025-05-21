@@ -1,4 +1,4 @@
-# Category API Specs
+# Product API Specs
 
 ## Create Product
 
