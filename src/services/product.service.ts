@@ -5,27 +5,7 @@ import { ResponseError } from "../middlewares/responseError";
 import { ProductCreateRequest, ProductUpdateRequest, ProductResponse, toProductResponse } from "../model/product.model";
 import { ProductValidation } from "../validations/product.validation";
 import { Validation } from "../validations/validation";
-import dotenv from 'dotenv';
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-
-dotenv.config();
-
-const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID;
-const awsSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-const awsRegion = process.env.AWS_REGION;
-const awsS3Bucket = process.env.AWS_S3_BUCKET;
-
-if (!awsAccessKeyId || !awsSecretAccessKey || !awsRegion || !awsS3Bucket) {
-  throw new Error("AWS credentials or region or bucket name not set in environment variables");
-}
-
-const client = new S3Client({
-  credentials: {
-    accessKeyId: awsAccessKeyId,
-    secretAccessKey: awsSecretAccessKey,
-  },
-  region: awsRegion,
-});
+import { client, uploadToS3, deleteFromS3 } from "../config/s3";
 
 export class ProductService {
   static async getAll() : Promise<ProductResponse[]> {
@@ -76,20 +56,8 @@ export class ProductService {
     // Upload image to S3 if provided
     let s3ImageUrl = null;
     if (createRequest.image) {
-      const params = {
-        Bucket: awsS3Bucket,
-        Key: createRequest.image.filename || `${Date.now()}-${createRequest.image.originalname}`,
-        Body: createRequest.image.buffer,
-        ContentType: createRequest.image.mimetype,
-      };
-
-      const command = new PutObjectCommand(params);
-      await client.send(command);
-
-      s3ImageUrl = `https://${awsS3Bucket}.s3.${awsRegion}.amazonaws.com/${params.Key}`;
+      s3ImageUrl = await uploadToS3(createRequest.image);
     }
-
-    // const imageUrl = createRequest.image ? `/uploads/${createRequest.image.filename}` : null;
 
     const productData = {
       name: createRequest.name,
@@ -126,9 +94,32 @@ export class ProductService {
       throw new ResponseError(404, "Product not found");
     }
 
-    const imageUrl = updateRequest.image 
-    ? `/uploads/${updateRequest.image.filename}` // Use just the filename with correct path
-    : null;
+    // check if the product name already exists
+    const totalProductWithSameName = await prismaClient.product.count({
+      where: {
+        name: updateRequest.name,
+        id: {
+          not: id
+        }
+      }
+    });
+
+    if (totalProductWithSameName != 0) {
+      throw new ResponseError(400, "Product already exists");
+    }
+
+    // Upload new image to S3 if provided
+    let imageUrl = null;
+    if (updateRequest.image) {
+      // Delete the old image from S3 if it exists
+      await deleteFromS3(product.imageUrl);
+
+      // Upload the new image to S3
+      imageUrl = await uploadToS3(updateRequest.image);
+    } else {
+      // If no new image is provided, keep the old image URL
+      imageUrl = product.imageUrl;
+    }
 
     const productData = {
       name: updateRequest.name,
@@ -165,18 +156,8 @@ export class ProductService {
       throw new ResponseError(404, "Product not found");
     }
 
-    // Delete the associated image file if it exists
-    if (product.imageUrl) {
-      try {
-        const imagePath = path.join(process.cwd(), 'public', product.imageUrl);
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
-          console.log(`Image deleted: ${imagePath}`);
-        }
-      } catch (error) {
-        console.error(`Error deleting image: ${error}`);
-      }
-    }
+    // Delete the image from S3 if it exists
+    await deleteFromS3(product.imageUrl);
 
     // delete the product
     const deletedProduct = await prismaClient.product.delete({
