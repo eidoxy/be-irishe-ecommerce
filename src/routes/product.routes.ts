@@ -7,7 +7,9 @@ const publicRouter = Router();
 
 publicRouter.get("/", ProductController.getAll);
 publicRouter.get("/:id", ProductController.getById);
-publicRouter.post("/create", uploadImage.single('image'), ProductController.create);
+publicRouter.post("/create", uploadImage, ProductController.create);
+publicRouter.put("/update/:id", uploadImage, ProductController.update);
+publicRouter.delete("/delete/:id", ProductController.delete);
 
 const productRouter = Router();
 productRouter.use(publicRouter);
