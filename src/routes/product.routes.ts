@@ -1,18 +1,17 @@
-// import { Router } from 'express';
-// import {
-//   getProducts,
-//   getProduct,
-//   createProduct,
-//   updateProduct,
-//   deleteProduct
-// } from '../controllers/product.controller';
+import { ProductController } from "../controllers/product.controller";
+import { Router } from "express";
+import { uploadImage } from "../middlewares/uploadImage";
 
-// const router = Router();
+const publicRouter = Router();
+// const privateRouter = Router();
 
-// router.get('/', getProducts);
-// router.get('/:id', getProduct);
-// router.post('/', createProduct);
-// router.put('/:id', updateProduct);
-// router.delete('/:id', deleteProduct);
+publicRouter.get("/", ProductController.getAll);
+publicRouter.get("/:id", ProductController.getById);
+publicRouter.post("/create", uploadImage, ProductController.create);
+publicRouter.put("/update/:id", uploadImage, ProductController.update);
+publicRouter.delete("/delete/:id", ProductController.delete);
 
-// export default router;
+const productRouter = Router();
+productRouter.use(publicRouter);
+
+export default productRouter;

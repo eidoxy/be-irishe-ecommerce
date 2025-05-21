@@ -1,102 +1,99 @@
-// import { Request, Response } from 'express';
-// import { PrismaClient } from '@prisma/client';
+import { ProductCreateRequest, ProductUpdateRequest } from "../model/product.model";
+import { ProductService } from "../services/product.service";
+import { Request, Response, NextFunction } from "express";
 
-// const prisma = new PrismaClient();
+export class ProductController {
+  static async getAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const response = await ProductService.getAll();
+      res.status(200).json({
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
-// export const getProducts = async (req: Request, res: Response): Promise<Response> => {
-//     try {
-//       const products = await prisma.product.findMany({ include: { Category: true } });
-//       return res.json(products);
-//     } catch (error) {
-//       return res.status(500).json({ message: 'Gagal mengambil produk', error });
-//     }
-//   };
+  static async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = parseInt(req.params.id);
+      const response = await ProductService.getById(id);
+      res.status(200).json({
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
-// export const getProduct = async (req: Request, res: Response) => {
-//   try {
-//     const product = await prisma.product.findUnique({
-//       where: { id: req.params.id },
-//       include: { Category: true }
-//     });
+  static async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const price = parseFloat(req.body.price);
+      const stock = parseInt(req.body.stock);
+      const categoryId = parseInt(req.body.categoryId);
+      
+      // Check for NaN values from failed conversions
+      if (isNaN(price) || isNaN(stock) || isNaN(categoryId)) {
+        throw new Error("Invalid numeric values. Price, stock, and categoryId must be numbers.");
+      }
+      
+      const request: ProductCreateRequest = {
+        name: req.body.name,
+        description: req.body.description,
+        price: price,
+        stock: stock,
+        categoryId: categoryId,
+        image: req.file
+      };
 
-//     if (!product) {
-//       return res.status(404).json({ message: 'Produk tidak ditemukan' });
-//     }
+      const response = await ProductService.create(request);
+      res.status(200).json({
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
-//     return res.json(product);
-//   } catch (error) {
-//     return res.status(500).json({ message: 'Gagal mengambil produk', error });
-//   }
-// };
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = parseInt(req.params.id);
+      const price = parseFloat(req.body.price);
+      const stock = parseInt(req.body.stock);
+      const categoryId = parseInt(req.body.categoryId);
 
-// export const createProduct = async (req: Request, res: Response) => {
-//   try {
-//     const category = await prisma.category.findUnique({
-//       where: { id: req.body.category_id },
-//     });
+      // Check for NaN values from failed conversions
+      if (isNaN(price) || isNaN(stock) || isNaN(categoryId)) {
+        throw new Error("Invalid numeric values. Price, stock, and categoryId must be numbers.");
+      }
 
-//     if (!category) {
-//       return res.status(400).json({ message: "Kategori tidak ditemukan" });
-//     }
+      const request: ProductUpdateRequest = {
+        name: req.body.name,
+        description: req.body.description,
+        price: price,
+        stock: stock,
+        categoryId: categoryId,
+        image: req.file
+      };
 
-//     const product = await prisma.product.create({
-//       data: {
-//         name: req.body.name,
-//         description: req.body.description,
-//         price: req.body.price,
-//         stock: req.body.stock,
-//         image_url: req.body.image_url,
-//         Category: {
-//           connect: { id: req.body.category_id },
-//         },
-//       },
-//     });
+      const response = await ProductService.update(id, request);
+      res.status(200).json({
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
-//     return res.status(201).json(product);
-//   } catch (error) {
-//     return res.status(500).json({ message: "Terjadi kesalahan saat membuat produk", error });
-//   }
-// };
-
-// export const updateProduct = async (req: Request, res: Response) => {
-//   try {
-//     const existingProduct = await prisma.product.findUnique({
-//       where: { id: req.params.id },
-//     });
-
-//     if (!existingProduct) {
-//       return res.status(404).json({ message: 'Produk tidak ditemukan' });
-//     }
-
-//     const updatedProduct = await prisma.product.update({
-//       where: { id: req.params.id },
-//       data: {
-//         name: req.body.name,
-//         description: req.body.description,
-//         price: req.body.price,
-//         stock: req.body.stock,
-//         image_url: req.body.image_url,
-//         Category: {
-//           connect: { id: req.body.category_id },
-//         },
-//       },
-//     });
-
-//     return res.json(updatedProduct);
-//   } catch (error) {
-//     return res.status(500).json({ message: 'Gagal mengubah produk', error });
-//   }
-// };
-
-// export const deleteProduct = async (req: Request, res: Response) => {
-//   try {
-//     await prisma.product.delete({
-//       where: { id: req.params.id },
-//     });
-//     return res.json({ message: 'Produk berhasil dihapus' });
-//   } catch (error) {
-//     return res.status(500).json({ message: 'Gagal menghapus produk', error });
-//   }
-// };
-
-
+  static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = parseInt(req.params.id);
+      const response = await ProductService.delete(id);
+      res.status(200).json({
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+}
