@@ -8,6 +8,8 @@ export class AdminController {
       const request: AdminCreateRequest = req.body as AdminCreateRequest;
       const response = await AdminService.register(request);
       res.status(200).json({
+        status: "success",
+        message: "Admin registered successfully",
         data: response,
       });
     } catch (error) {

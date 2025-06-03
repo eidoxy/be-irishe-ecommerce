@@ -7,6 +7,8 @@ export class ProductController {
     try {
       const response = await ProductService.getAll();
       res.status(200).json({
+        status: "success",
+        message: "Products retrieved successfully",
         data: response,
       });
     } catch (error) {
@@ -19,6 +21,8 @@ export class ProductController {
       const id = parseInt(req.params.id);
       const response = await ProductService.getById(id);
       res.status(200).json({
+        status: "success",
+        message: "Product retrieved successfully",
         data: response,
       });
     } catch (error) {
@@ -47,7 +51,9 @@ export class ProductController {
       };
 
       const response = await ProductService.create(request);
-      res.status(200).json({
+      res.status(201).json({
+        status: "success",
+        message: "Product created successfully",
         data: response,
       });
     } catch (error) {
@@ -78,6 +84,8 @@ export class ProductController {
 
       const response = await ProductService.update(id, request);
       res.status(200).json({
+        status: "success",
+        message: "Product updated successfully",
         data: response,
       });
     } catch (error) {
@@ -90,6 +98,8 @@ export class ProductController {
       const id = parseInt(req.params.id);
       const response = await ProductService.delete(id);
       res.status(200).json({
+        status: "success",
+        message: "Product deleted successfully",
         data: response,
       });
     } catch (error) {

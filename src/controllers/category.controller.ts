@@ -7,6 +7,8 @@ export class CategoryController {
     try {
       const response = await CategoryService.getAll();
       res.status(200).json({
+        status: "success",
+        message: "Categories retrieved successfully",
         data: response,
       });
     } catch (error) {
@@ -19,6 +21,8 @@ export class CategoryController {
       const id = parseInt(req.params.id);
       const response = await CategoryService.getById(id);
       res.status(200).json({
+        status: "success",
+        message: "Category retrieved successfully",
         data: response,
       });
     } catch (error) {
@@ -30,7 +34,9 @@ export class CategoryController {
     try {
       const request: CategoryCreateRequest = req.body as CategoryCreateRequest;
       const response = await CategoryService.create(request);
-      res.status(200).json({
+      res.status(201).json({
+        status: "success",
+        message: "Category created successfully",
         data: response,
       });
     } catch (error) {
@@ -44,6 +50,8 @@ export class CategoryController {
       const request: CategoryUpdateRequest = req.body as CategoryUpdateRequest;
       const response = await CategoryService.update(id, request);
       res.status(200).json({
+        status: "success",
+        message: "Category updated successfully",
         data: response,
       });
     } catch (error) {
@@ -56,6 +64,8 @@ export class CategoryController {
       const id = parseInt(req.params.id);
       const response = await CategoryService.delete(id);
       res.status(200).json({
+        status: "success",
+        message: "Category deleted successfully",
         data: response,
       });
     } catch (error) {
