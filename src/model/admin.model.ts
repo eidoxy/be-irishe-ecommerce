@@ -13,6 +13,16 @@ export type AdminCreateRequest = {
   password: string;
 }
 
+export type AdminLoginRequest = {
+  usernameOrEmail: string;
+  password: string;
+}
+
+export type AdminLoginResponse = {
+  admin: AdminResponse;
+  token: string;
+}
+
 export function toAdminResponse(admin: Admin) : AdminResponse {
   return {
     username: admin.username,
