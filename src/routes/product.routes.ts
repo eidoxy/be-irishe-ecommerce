@@ -1,17 +1,16 @@
 import { ProductController } from "../controllers/product.controller";
 import { Router } from "express";
 import { uploadImage } from "../middlewares/uploadImage";
-
-const publicRouter = Router();
-// const privateRouter = Router();
-
-publicRouter.get("/", ProductController.getAll);
-publicRouter.get("/:id", ProductController.getById);
-publicRouter.post("/create", uploadImage, ProductController.create);
-publicRouter.put("/update/:id", uploadImage, ProductController.update);
-publicRouter.delete("/delete/:id", ProductController.delete);
+import { authenticate } from "../middlewares/authenticate";
 
 const productRouter = Router();
-productRouter.use(publicRouter);
+
+productRouter.get("/", ProductController.getAll);
+productRouter.get("/category/:categoryId", ProductController.getByCategory);
+productRouter.get("/:id", ProductController.getById);
+
+productRouter.post("/create", authenticate, uploadImage, ProductController.create);
+productRouter.put("/update/:id", authenticate, uploadImage, ProductController.update);
+productRouter.delete("/delete/:id", authenticate, ProductController.delete);
 
 export default productRouter;

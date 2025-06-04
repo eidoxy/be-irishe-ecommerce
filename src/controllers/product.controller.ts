@@ -5,11 +5,92 @@ import { Request, Response, NextFunction } from "express";
 export class ProductController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await ProductService.getAll();
+      const sortBy = req.query.sortBy as string || 'name';
+      const sortOrder = req.query.sortOrder as string || 'asc';
+      const categoryId = req.query.categoryId ? parseInt(req.query.categoryId as string) : undefined;
+      
+      const validSortFields = ['name', 'price', 'stock'];
+      const validSortOrders = ['asc', 'desc'];
+      
+      if (!validSortFields.includes(sortBy)) {
+        res.status(400).json({
+          status: "error",
+          message: `Invalid sortBy parameter. Valid options: ${validSortFields.join(', ')}`
+        });
+      }
+      
+      if (!validSortOrders.includes(sortOrder)) {
+        res.status(400).json({
+          status: "error",
+          message: `Invalid sortOrder parameter. Valid options: ${validSortOrders.join(', ')}`
+        });
+      }
+
+      if (categoryId !== undefined && (isNaN(categoryId) || categoryId <= 0)) {
+        res.status(400).json({
+          status: "error",
+          message: "Invalid categoryId parameter. Must be a positive number."
+        });
+      }
+      
+      const response = await ProductService.getAll(sortBy, sortOrder as 'asc' | 'desc');
       res.status(200).json({
         status: "success",
         message: "Products retrieved successfully",
         data: response,
+        meta: {
+          sortBy,
+          sortOrder,
+          categoryId: categoryId || null,
+          total: response.length
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getByCategory(req: Request, res: Response, next: NextFunction) {
+    try {
+      const categoryId = parseInt(req.params.categoryId);
+      const sortBy = req.query.sortBy as string || 'name';
+      const sortOrder = req.query.sortOrder as string || 'asc';
+      
+      const validSortFields = ['name', 'price', 'stock'];
+      const validSortOrders = ['asc', 'desc'];
+      
+      if (isNaN(categoryId) || categoryId <= 0) {
+        res.status(400).json({
+          status: "error",
+          message: "Invalid categoryId parameter. Must be a positive number."
+        });
+      }
+
+      if (!validSortFields.includes(sortBy)) {
+        res.status(400).json({
+          status: "error",
+          message: `Invalid sortBy parameter. Valid options: ${validSortFields.join(', ')}`
+        });
+      }
+      
+      if (!validSortOrders.includes(sortOrder)) {
+        res.status(400).json({
+          status: "error",
+          message: `Invalid sortOrder parameter. Valid options: ${validSortOrders.join(', ')}`
+        });
+      }
+
+      const response = await ProductService.getAll(sortBy, sortOrder as 'asc' | 'desc', categoryId);
+      res.status(200).json({
+        status: "success",
+        message: `Products in category ${categoryId} retrieved successfully`,
+        data: response,
+        meta: {
+          sortBy,
+          sortOrder,
+          categoryId,
+          total: response.length
+        }
       });
     } catch (error) {
       next(error);

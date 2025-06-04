@@ -33,7 +33,6 @@ const env = process.env.NODE_ENV === 'production';
 
 // Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(process.cwd(), 'public')));
 app.use(cors({
   origin: '*',
