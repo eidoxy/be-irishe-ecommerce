@@ -8,11 +8,26 @@ import { Validation } from "../validations/validation";
 import { client, uploadToS3, deleteFromS3 } from "../config/s3";
 
 export class ProductService {
-  static async getAll() : Promise<ProductResponse[]> {
+  static async getAll(sortBy: string = 'name', sortOrder: 'asc' | 'desc' = 'asc', categoryId?: number) : Promise<ProductResponse[]> {
+    const orderBy: any = {};
+    orderBy[sortBy] = sortOrder;
+
+    const whereClause: any = {};
+    if (categoryId !== undefined) {
+      const categoryExists = await prismaClient.category.findUnique({
+        where: { id: categoryId }
+      });
+
+      if (!categoryExists) {
+        throw new ResponseError(404, "Category not found");
+      }
+
+      whereClause.categoryId = categoryId;
+    }
+    
     const products = await prismaClient.product.findMany({
-      orderBy: {
-        name: "asc"
-      },
+      where: whereClause,
+      orderBy: orderBy,
       include: {
         category: true
       }

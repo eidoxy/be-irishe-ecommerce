@@ -3,19 +3,14 @@ import { Router } from "express";
 import { uploadImage } from "../middlewares/uploadImage";
 import { authenticate } from "../middlewares/authenticate";
 
-const publicRouter = Router();
-const privateRouter = Router();
-
-publicRouter.get("/", ProductController.getAll);
-publicRouter.get("/:id", ProductController.getById);
-
-privateRouter.use(authenticate);
-privateRouter.post("/create", uploadImage, ProductController.create);
-privateRouter.put("/update/:id", uploadImage, ProductController.update);
-privateRouter.delete("/delete/:id", ProductController.delete);
-
 const productRouter = Router();
-productRouter.use(publicRouter);
-productRouter.use(privateRouter);
+
+productRouter.get("/", ProductController.getAll);
+productRouter.get("/category/:categoryId", ProductController.getByCategory);
+productRouter.get("/:id", ProductController.getById);
+
+productRouter.post("/create", authenticate, uploadImage, ProductController.create);
+productRouter.put("/update/:id", authenticate, uploadImage, ProductController.update);
+productRouter.delete("/delete/:id", authenticate, ProductController.delete);
 
 export default productRouter;

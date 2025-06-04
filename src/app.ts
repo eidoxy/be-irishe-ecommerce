@@ -3,7 +3,6 @@ import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import multer from 'multer';
 import { errorHandler } from './middlewares/errorHandler';
 import routes from './routes';
 import dotenv from 'dotenv';
@@ -13,7 +12,6 @@ dotenv.config();
 const app = express();
 const allowedOrigins = process.env.ALLOW_ORIGINS ? process.env.ALLOW_ORIGINS.split(',') : [];
 const env = process.env.NODE_ENV === 'production';
-const upload = multer();
 
 // CORS configuration
 // const corsOptions = {
@@ -35,8 +33,6 @@ const upload = multer();
 
 // Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(upload.none());
 app.use(express.static(path.join(process.cwd(), 'public')));
 app.use(cors({
   origin: '*',
